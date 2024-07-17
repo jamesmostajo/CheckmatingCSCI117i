@@ -13,20 +13,32 @@ def get_data():
 
     return
 
-def show_checkmate_heatmap():
+
+def show_checkmate_heatmap(start_elo, end_elo):
     import plotly.express as px
     
     st.subheader("Where do pieces move to checkmate?")
+    st.write("insert description here.")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        filter_piece = st.selectbox(
+                "Filter a piece",
+                ("No Filter", "Pawn", "Knight", "Bishop", "Rook", "Queen", "Castling")
+            )
+        
 
     data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
-    # data = pyfile.func()
+    # data = pyfile.func(start_elo, end_elo, filter_piece)
 
     fig = px.imshow(data,
                     labels=dict(color="Checkmates"),
                     x=list("abcdefgh"),
                     y=list("12345678"),
-                    height = 690
+                    color_continuous_scale = "mint"
                    )
+
+    fig.update_layout(margin=dict(t=0, b=0), height=600)
 
 
     st.plotly_chart(fig, theme="streamlit")
@@ -51,7 +63,7 @@ def main():
     st.write("Filters")
     col1, col2, col3 = st.columns(3, gap="medium")
     with col1:
-        time_control = option = st.selectbox(
+        time_control = st.selectbox(
             "Time Control",
             ("All", "A", "B", "C")
         )
@@ -62,12 +74,12 @@ def main():
             value=(2300, 3531)
         )
     with col3:
-        opening = option = st.selectbox(
+        opening = st.selectbox(
             "Select an opening",
             ("All", "A", "B", "C")
         )
 
-    show_checkmate_heatmap()
+    show_checkmate_heatmap(start_elo, end_elo)
 
 
 if __name__ == '__main__':
