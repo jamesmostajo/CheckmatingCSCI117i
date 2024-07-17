@@ -9,7 +9,6 @@ for i in range(1, 12+1):
         filenames.append("Games/"+str(i)+"GamesChessMoves.csv")
         fileouts.append("Checkmates/"+str(i)+"Checkmates.csv")
 
-
 for i in range(12):
     filepath = filenames[i]
     fileout = fileouts[i]
@@ -19,11 +18,12 @@ for i in range(12):
     data = "empty_data"
     while (data):
         data = f.readline()
-        data = str(data)
-        moves = [move for move in data.split(",")]
+        data = [token for token in str(data).split(",")]
+        game_id = data[0]
+        moves = data[1:]
         if len(moves) == 1: break
-        if moves[-3][-1] == "#":
-            print(*moves[:-1], sep=",", file=s)
+        if moves[-2][-1] == "#":
+            print(*[game_id, *moves[:-1]], sep=",", file=s)
 
     f.close()
     s.close()
