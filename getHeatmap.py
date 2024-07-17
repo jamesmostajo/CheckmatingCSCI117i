@@ -1,7 +1,10 @@
 import csv
-filename = "MatePieces.csv"
+import streamlit as st
 
-def getHeatmapData(pieceFilter):
+filename = "Cleaning/MateElo.csv"
+
+@st.cache_data
+def getHeatmapData(pieceFilter, ratingFilter1, ratingFilter2):
     with open(filename, "r") as csvfile:
         csvreader = csv.reader(csvfile)
         
@@ -17,8 +20,11 @@ def getHeatmapData(pieceFilter):
                 notationToIndex[columns[j]+rows[i]] = (i, j)
 
         for row in csvreader:
-            piece = row[2]; square = row[3]
-            if piece != pieceFilter and pieceFilter != "No Filter": continue
+            piece = row[2]
+            square = row[3]
+            rating1, rating2 = row[7], row[8]
+            if (pieceFilter != "No Filter" and piece != pieceFilter) or (int(rating1) < int(ratingFilter1) or int(rating2) > int(ratingFilter2)):
+                continue
             i, j = notationToIndex[square]
             data[i][j] += 1
     

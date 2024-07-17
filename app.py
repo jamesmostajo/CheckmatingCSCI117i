@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap
+import getHeatmap, getGamesNum
 
 random.seed(121415)
 
@@ -29,20 +29,24 @@ def show_checkmate_heatmap(start_elo, end_elo):
         
 
     # data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
-    data = getHeatmap.getHeatmapData(filter_piece)
+    data = getHeatmap.getHeatmapData(filter_piece, start_elo, end_elo)
 
     fig = px.imshow(data,
-                    labels=dict(color="Checkmates"),
+                    labels=dict(color="# of checkmates"),
                     x=list("abcdefgh"),
-                    y=list("12345678"),
+                    y=list("87654321"),
                     color_continuous_scale = "mint"
                    )
 
-    fig.update_layout(margin=dict(t=0, b=0), height=600)
+    fig.update_layout(margin=dict(t=0, b=0), height=600, yaxis=dict(type='category'))
 
 
     st.plotly_chart(fig, theme="streamlit")
 
+
+def show_big_number(start_elo, end_elo):
+    game_num = getGamesNum.getGamesNum(start_elo, end_elo)
+    st.metric("Number of games being analyzed", game_num)
 
 def main():
     st.set_page_config(
@@ -54,31 +58,23 @@ def main():
         }
     )
 
-    st.title("Chess Visualizations :chess_pawn:")
-    st.write("By Bryan Francisco, Ivan Mostajo, and Robin Vicente")
+    st.title("2023 Lichess Visualizations :chess_pawn:")
+    st.caption("By Bryan Francisco, James Mostajo, and Robin Vicente")
 
     st.divider()
 
     # Filters
-    st.write("Filters")
-    col1, col2, col3 = st.columns(3, gap="medium")
+    col1, col2 = st.columns(2, gap="medium")
     with col1:
-        time_control = st.selectbox(
-            "Time Control",
-            ("All", "A", "B", "C")
-        )
-    with col2:
         start_elo, end_elo = st.select_slider(
             "Select a range of elo rating",
             options=range(2300, 3532),
             value=(2300, 3531)
         )
-    with col3:
-        opening = st.selectbox(
-            "Select an opening",
-            ("All", "A", "B", "C")
-        )
+    with col2:
+        show_big_number(start_elo, end_elo)
 
+    
     show_checkmate_heatmap(start_elo, end_elo)
 
 
