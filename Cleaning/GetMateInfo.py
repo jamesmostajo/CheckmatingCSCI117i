@@ -6,7 +6,7 @@ for i in range(1, 12+1):
         filenames.append("Checkmates/"+str(i)+"Checkmates.csv")
 
 fileout = "./../MatePieces.csv"
-won = ["Black", "White"]
+won = ["White", "Black"]
 
 def get_matingpiece(pieceCode):
     pieceName = {
@@ -24,12 +24,10 @@ def get_matingpiece(pieceCode):
 def get_square(moveNotation, color):
     if "O" in moveNotation:
         side = "1" if color == "White" else "8"
-
-        if len(moveNotation) == 5:
+        if len(moveNotation) == 6:
             return "c"+side
-        elif len(moveNotation) == 3:
+        elif len(moveNotation) == 4:
             return "g"+side
-    
     if "=" in moveNotation:
         return moveNotation[-5:-3]
     
@@ -45,24 +43,25 @@ for i in range(12):
     data = "1"
     while (data):
         data = f.readline()
-        data = str(data)
-        moves = [move for move in data.split(",")]
-        if len(moves) == 1:
+        data = [token for token in str(data).split(",")]
+        game_id = data[0]
+        moves = data[1:]
+
+        if len(moves) == 0:
             break
-        mate_move = moves[-2]        
+        mate_move = moves[-2]
         
-        color = won[len(moves[:-1])%2]
+        color = won[len(moves)%2]
         capture = True if "x" in mate_move else False
         promoted = True if "=" in mate_move else False
 
         capture_message = "Capture" if capture else "Not Capture"
         promote_message = "Promotion" if promoted else "Not Promotion"
-
         mating_piece = get_matingpiece(mate_move[0])
 
         square = get_square(mate_move, color)
 
-        print(*[mate_move, mating_piece, square, color, capture_message, promote_message], sep=",", file=s)
+        print(*[game_id, mate_move, mating_piece, square, color, capture_message, promote_message], sep=",", file=s)
 
     f.close()
 s.close()

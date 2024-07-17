@@ -23,7 +23,7 @@ for i in range(12):
         moves = data[1:]
         if len(moves) == 1: break
         if moves[-2][-1] == "#":
-            print(*[game_id, *moves[:-1]], sep=",", file=s)
+            print(*[game_id, *moves], sep=",", file=s, end='')
 
     f.close()
     s.close()
