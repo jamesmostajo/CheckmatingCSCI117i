@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-# import pyfile
+import getHeatmap
 
 random.seed(121415)
 
@@ -24,12 +24,12 @@ def show_checkmate_heatmap(start_elo, end_elo):
     with col1:
         filter_piece = st.selectbox(
                 "Filter a piece",
-                ("No Filter", "Pawn", "Knight", "Bishop", "Rook", "Queen", "Castling")
+                ("No Filter", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
             )
         
 
-    data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
-    # data = pyfile.func(start_elo, end_elo, filter_piece)
+    # data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
+    data = getHeatmap.getHeatmapData(filter_piece)
 
     fig = px.imshow(data,
                     labels=dict(color="Checkmates"),
