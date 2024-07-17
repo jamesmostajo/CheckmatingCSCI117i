@@ -9,10 +9,8 @@ for i in range(1, 12+1):
         filenames.append(base+str(i)+".pgn")
         fileouts.append("Games/"+str(i)+"GamesChessMoves.csv")
 
-
+game_id = 0
 for i in range(12):
-# filepath = "ChessData/lichess_elite_2023-01.pgn"
-# fileout = "JanuaryGamesChessMoves.csv"
     filepath = filenames[i]
     fileout = fileouts[i]
     f = open(filepath, "r")
@@ -40,10 +38,10 @@ for i in range(12):
 
     # print(len(games))
     for game in games:
-        for move in game:
-            s.write(move)
-            s.write(",")
-        s.write("\n")
+        print(game_id, end=',', file=s)
+        print(*game, sep=',', file=s)
+        game_id+=1
+
 
     f.close()
     s.close()
