@@ -17,23 +17,21 @@ def get_data():
 def show_checkmate_heatmap(start_elo, end_elo):
     import plotly.express as px
     
-    st.subheader("Where do pieces move to checkmate?")
-    st.write("insert description here.")
+    st.subheader("Where do Pieces move to Checkmate?")
+    st.write("Below is a heatmap displaying any given chess pieces’ most common position on the board whenever they get a checkmate.")
     col1, col2, col3 = st.columns(3)
 
     with col1:
         filter_piece = st.selectbox(
-                "Filter a piece",
-                ("No Filter", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
+                "Select piece",
+                ("Select All", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
         )
     with col2:
         filter_winner = st.selectbox(
-                "Filter winning side",
-                ("No Filter", "Black", "White")
+                "Select winning side",
+                ("Select Both", "Black", "White")
         )
         
-
-    # data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
     data = getHeatmap.getHeatmapData(filter_piece, start_elo, end_elo, filter_winner)
 
     fig = px.imshow(data,
@@ -111,9 +109,12 @@ def show_pie_graph(start_elo, end_elo):
     if data == -1 :
         st.write("There are no checkmates in this elo range")
         return
-    fig = px.pie(names=data['piece'], values = data['pieceCount'])
 
-    fig.update_layout(margin=dict(t=0), height=600, yaxis=dict(type='category'))
+    custom_colors = ['#330036', '#A3001E', '#125D63', '#0D7296', '#F5B841', '#EC6F9B']
+    
+    fig = px.pie(names=data['piece'], values = data['pieceCount'], color_discrete_sequence=custom_colors)
+
+    fig.update_layout(margin=dict(t=0, b=0))
     st.plotly_chart(fig, theme="streamlit")
 
 def show_big_number(start_elo, end_elo):
@@ -123,8 +124,8 @@ def show_big_number(start_elo, end_elo):
 def show_piece_takes(start_elo, end_elo):
     import plotly.graph_objects as go
 
-    st.subheader("How many takes does each piece has?")
-    st.write("insert description here.")
+    st.subheader("How many captures does each Piece make?")
+    st.write("This bar graph depicts which piece has the highest number of takes among the others")
 
     is_divided = st.toggle("Divide by number of type of piece")
 
@@ -142,7 +143,7 @@ def show_piece_takes(start_elo, end_elo):
                 x=x, y=y,
                 text=y_text,
                 textposition='auto',
-                marker=dict(color='mediumvioletred')
+                marker=dict(color='#125D63')
             )])
 
     fig.update_layout(margin=dict(t=0, b=0))
@@ -158,7 +159,18 @@ def show_pie_result(start_elo, end_elo):
     labels = ['Checkmates','Draws','Others']
     values = getPieGameResults.getPieGameresults(start_elo, end_elo)
 
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    custom_colors = ['#330036', '#A3001E', '#125D63']
+    hover_text = [
+        "",
+        "",
+        "Resignations, time forfeit, and other game results"
+    ]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, 
+                                    marker=dict(colors=custom_colors),
+                                    hoverinfo='label+percent+text',
+                                    hovertext=hover_text
+                                    )])
 
     fig.update_layout(margin=dict(t=0, b=0))
 
@@ -183,15 +195,15 @@ def main():
     with col1:
         start_elo, end_elo = st.select_slider(
             "Select range of game elo rating",
-            options=range(2300, 4001),
-            value=(2300, 4000)
+            options=range(2300, 3201),
+            value=(2300, 3200)
         )
     with col2:
         show_big_number(start_elo, end_elo)
 
     
     show_checkmate_heatmap(start_elo, end_elo)  
-    show_waffle(start_elo, end_elo)
+    # show_waffle(start_elo, end_elo)
     show_piece_takes(start_elo, end_elo)
     show_pie_result(start_elo, end_elo)
     show_pie_graph(start_elo, end_elo)

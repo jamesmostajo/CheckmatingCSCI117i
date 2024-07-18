@@ -24,7 +24,7 @@ def getHeatmapData(pieceFilter, ratingFilter1, ratingFilter2, winnerFilter):
             square = row[3]
             rating1, rating2 = row[7], row[8]
             winner = row[4]
-            if (pieceFilter != "No Filter" and piece != pieceFilter) or (int(rating1) < int(ratingFilter1) or int(rating2) > int(ratingFilter2)) or (winnerFilter != "No Filter" and winner != winnerFilter):
+            if (pieceFilter != "Select All" and piece != pieceFilter) or (int(rating1) < int(ratingFilter1) or int(rating2) > int(ratingFilter2)) or (winnerFilter != "Select Both" and winner != winnerFilter):
                 continue
             i, j = notationToIndex[square]
             data[i][j] += 1
