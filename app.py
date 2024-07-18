@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap, getGamesNum
+import getHeatmap, getGamesNum, getWaffle
 
 random.seed(121415)
 
@@ -49,6 +49,31 @@ def show_checkmate_heatmap(start_elo, end_elo):
     st.plotly_chart(fig, theme="streamlit")
 
 
+def show_waffle(start_elo, end_elo):
+    import plotly.graph_objects as go
+
+    gap = 0.25
+    data = getWaffle.getWaffleData(start_elo, end_elo)
+    
+    colors = ['#0015FF', '#FF00A1', '#90FE00', '#8400FF', '#00FFF7', '#FF7300']
+    color_scale = [[i / (len(colors) - 1), color] for i, color in enumerate(colors)]
+
+    fig = go.Figure(data=go.Heatmap(
+        z=data,
+        colorscale=color_scale,
+        showscale=False,
+        xgap = gap, ygap = gap
+    ))
+
+    fig.update_layout(
+        height=1000,
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks=''),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks='')
+    )
+
+    st.plotly_chart(fig, theme="streamlit")
+
+
 def show_big_number(start_elo, end_elo):
     game_num = getGamesNum.getGamesNum(start_elo, end_elo)
     st.metric("Number of games being analyzed", game_num)
@@ -80,7 +105,8 @@ def main():
         show_big_number(start_elo, end_elo)
 
     
-    show_checkmate_heatmap(start_elo, end_elo)
+    show_checkmate_heatmap(start_elo, end_elo)  
+    show_waffle(start_elo, end_elo)  
 
 
 if __name__ == '__main__':
