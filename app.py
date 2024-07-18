@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap, getGamesNum, getWaffle, getPieceTakes
+import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPieGameResults
 
 random.seed(121415)
 
@@ -48,7 +48,6 @@ def show_checkmate_heatmap(start_elo, end_elo):
 
     st.plotly_chart(fig, theme="streamlit")
 
-
 def show_waffle(start_elo, end_elo):
     import plotly.graph_objects as go
 
@@ -80,7 +79,6 @@ def show_waffle(start_elo, end_elo):
 
     st.plotly_chart(fig, theme="streamlit")
 
-
 def show_big_number(start_elo, end_elo):
     game_num = getGamesNum.getGamesNum(start_elo, end_elo)
     st.metric("Number of games being analyzed", game_num)
@@ -91,8 +89,14 @@ def show_piece_takes(start_elo, end_elo):
     st.subheader("How many takes does each piece has?")
     st.write("insert description here.")
 
+    is_divided = st.toggle("Divide by number of type of piece")
+
     x = ['Pawn', 'Rook', 'Knight', 'Bishop', 'Queen', 'King']
     y = getPieceTakes.getPieceTakesData(start_elo, end_elo)
+
+    if is_divided:
+        div = [16, 4, 4, 4, 2, 2]
+        y = [y[i]//div[i] for i in range(6)]
 
     y_text = [f'{val:,}' for val in y]
 
@@ -108,10 +112,25 @@ def show_piece_takes(start_elo, end_elo):
 
     st.plotly_chart(fig, theme="streamlit")
 
+def show_pie_result(start_elo, end_elo):
+    import plotly.graph_objects as go
+
+    st.subheader("Pie")
+    st.write("insert description here.")
+
+    labels = ['Checkmates','Draws','Others']
+    values = getPieGameResults.getPieGameresults(start_elo, end_elo)
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+    fig.update_layout(margin=dict(t=0, b=0))
+
+    st.plotly_chart(fig, theme="streamlit")
+
 def main():
     st.set_page_config(
         page_title="Chess Visualizations", 
-        page_icon=":chess_pawn:", 
+        page_icon=":chess_pawn:",
         layout="centered",
         menu_items={
             'About': "This app is made for a Data Visualization class in Ateneo de Manila University."
@@ -123,7 +142,6 @@ def main():
 
     st.divider()
 
-    # Filters
     col1, col2 = st.columns(2, gap="medium")
     with col1:
         start_elo, end_elo = st.select_slider(
@@ -134,10 +152,10 @@ def main():
     with col2:
         show_big_number(start_elo, end_elo)
 
-    
-    show_checkmate_heatmap(start_elo, end_elo)  
+    show_checkmate_heatmap(start_elo, end_elo)
     show_waffle(start_elo, end_elo)
     show_piece_takes(start_elo, end_elo)
+    show_pie_result(start_elo, end_elo)
 
 if __name__ == '__main__':
     main()
