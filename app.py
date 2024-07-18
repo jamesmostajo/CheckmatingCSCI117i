@@ -67,9 +67,9 @@ def main():
     col1, col2 = st.columns(2, gap="medium")
     with col1:
         start_elo, end_elo = st.select_slider(
-            "Select a range of elo rating",
-            options=range(2300, 3532),
-            value=(2300, 3531)
+            "Select range of game elo rating",
+            options=range(2300, 4001),
+            value=(2300, 4000)
         )
     with col2:
         show_big_number(start_elo, end_elo)
