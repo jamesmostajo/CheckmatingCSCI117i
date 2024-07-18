@@ -25,11 +25,16 @@ def show_checkmate_heatmap(start_elo, end_elo):
         filter_piece = st.selectbox(
                 "Filter a piece",
                 ("No Filter", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
-            )
+        )
+    with col2:
+        filter_winner = st.selectbox(
+                "Filter winning side",
+                ("No Filter", "Black", "White")
+        )
         
 
     # data = [[random.randint(1, 1000) for _ in range(8)] for _ in range(8)]
-    data = getHeatmap.getHeatmapData(filter_piece, start_elo, end_elo)
+    data = getHeatmap.getHeatmapData(filter_piece, start_elo, end_elo, filter_winner)
 
     fig = px.imshow(data,
                     labels=dict(color="# of checkmates"),
