@@ -194,6 +194,7 @@ def main():
     show_waffle(start_elo, end_elo)
     show_piece_takes(start_elo, end_elo)
     show_pie_result(start_elo, end_elo)
+    show_pie_graph(start_elo, end_elo)
 
 if __name__ == '__main__':
     main()
