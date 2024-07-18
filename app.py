@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPieGameResults
+import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPie, getPieGameResults
 
 random.seed(121415)
 
@@ -60,23 +60,60 @@ def show_waffle(start_elo, end_elo):
         st.write("insert description here.")
     gap = 0.25
     
+    unique_values = [0, 1, 2, 3, 4, 5]
+    labels = ["Pawn", "Knight", "Bishop", "Rook", "Queen", "King"]
+
     colors = ['#0015FF', '#FF00A1', '#90FE00', '#8400FF', '#00FFF7', '#FF7300']
     color_scale = [[i / (len(colors) - 1), color] for i, color in enumerate(colors)]
+
 
     fig = go.Figure(data=go.Heatmap(
         z=data,
         colorscale=color_scale,
         showscale=False,
-        hoverinfo='none',
-        xgap = gap, ygap = gap
+        # hoverinfo='none',
+        xgap=gap, ygap=gap,
+        zmin=0,zmax=5 
     ))
 
+    for i, (color, label) in enumerate(zip(colors, labels)):
+        fig.add_trace(go.Scatter(
+            x=[None],
+            y=[None],
+            mode='markers',
+            marker=dict(size=10, color=color),
+            legendgroup=str(i),
+            showlegend=True,
+            name=label
+        ))
+
     fig.update_layout(
-        height=1000, margin=dict(t=0, b=0),
+        height=700, margin=dict(t=0, b=0),
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks=''),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks='')
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks=''),
+        legend=dict(
+            title="Legend",
+            orientation="v",
+            yanchor="top",
+            xanchor="right",
+            y=1, x=1.15,
+        )
     )
 
+    st.plotly_chart(fig, theme="streamlit")
+
+def show_pie_graph(start_elo, end_elo):
+    import plotly.express as px
+    data = getPie.getPieData(start_elo, end_elo)
+
+    st.subheader("Insert title here")
+    st.write("insert description here.")
+    if data == -1 :
+        st.write("There are no checkmates in this elo range")
+        return
+    fig = px.pie(names=data['piece'], values = data['pieceCount'])
+
+    fig.update_layout(margin=dict(t=0), height=600, yaxis=dict(type='category'))
     st.plotly_chart(fig, theme="streamlit")
 
 def show_big_number(start_elo, end_elo):
@@ -152,7 +189,8 @@ def main():
     with col2:
         show_big_number(start_elo, end_elo)
 
-    show_checkmate_heatmap(start_elo, end_elo)
+    
+    show_checkmate_heatmap(start_elo, end_elo)  
     show_waffle(start_elo, end_elo)
     show_piece_takes(start_elo, end_elo)
     show_pie_result(start_elo, end_elo)
