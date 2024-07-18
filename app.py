@@ -212,8 +212,8 @@ def main():
         "Games Played?",
         "Move to Checkmate?",
         "Piece Captures?",
-        "Number of Games played",
-        "Number of Games played",
+        "Results Frequency?",
+        "Piece to Checkmate?",
     ])
 
     with tab1:
