@@ -1,17 +1,5 @@
 import streamlit as st
-import random
 import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPie, getPieGameResults, getEloHistogram
-
-random.seed(121415)
-
-
-@st.cache_data
-def get_data():
-    "get data from csv files"
-    
-    # to do
-
-    return
 
 
 def show_checkmate_heatmap(start_elo, end_elo):
@@ -104,7 +92,7 @@ def show_pie_graph(start_elo, end_elo):
     import plotly.express as px
     data = getPie.getPieData(start_elo, end_elo)
 
-    st.subheader("Insert title here")
+    st.subheader("What Piece is used the most to Checkmate?")
     st.write("insert description here.")
     if data == -1 :
         st.write("There are no checkmates in this elo range")
@@ -153,7 +141,7 @@ def show_piece_takes(start_elo, end_elo):
 def show_pie_result(start_elo, end_elo):
     import plotly.graph_objects as go
 
-    st.subheader("Pie")
+    st.subheader("How frequent do Checkmates occur?")
     st.write("insert description here.")
 
     labels = ['Checkmates','Draws','Others']
@@ -178,13 +166,19 @@ def show_pie_result(start_elo, end_elo):
 
 def show_histogram():
     import plotly.express as px
-    st.subheader("Number of Games played for each Game ELO")
+    st.subheader("Number of Games played by Game Elo")
     data = getEloHistogram.getHistogramData()
-    fig = px.histogram(x=data['elo_ranges'], y=data['values'], nbins=len(data['elo_ranges']))
+    custom_colors = ['#125D63']
+    fig = px.histogram(
+        x=data['elo_ranges'], 
+        y=data['values'], 
+        nbins=len(data['elo_ranges']),
+        color_discrete_sequence=custom_colors
+    )
     
     fig.update_layout(
         margin=dict(t=0, b=0),
-        xaxis_title='ELO Rating',
+        xaxis_title='Elo Rating',
         yaxis_title='Number of Games',
     )
     st.plotly_chart(fig, theme="streamlit")
@@ -202,7 +196,7 @@ def main():
     st.title("2023 Lichess Visualizations :chess_pawn:")
     st.caption("By Bryan Francisco, James Mostajo, and Robin Vicente")
 
-    st.divider()
+    # st.divider()
 
     col1, col2 = st.columns(2, gap="medium")
     with col1:
@@ -214,12 +208,25 @@ def main():
     with col2:
         show_big_number(start_elo, end_elo)
 
-    show_histogram()
-    show_checkmate_heatmap(start_elo, end_elo)  
-    # show_waffle(start_elo, end_elo)
-    show_piece_takes(start_elo, end_elo)
-    show_pie_result(start_elo, end_elo)
-    show_pie_graph(start_elo, end_elo)
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "Games Played?",
+        "Move to Checkmate?",
+        "Piece Captures?",
+        "Number of Games played",
+        "Number of Games played",
+    ])
+
+    with tab1:
+        show_histogram()
+    with tab2:
+        show_checkmate_heatmap(start_elo, end_elo)  
+    with tab3:
+        show_piece_takes(start_elo, end_elo)
+    with tab4:
+        show_pie_result(start_elo, end_elo)
+    with tab5:
+        show_pie_graph(start_elo, end_elo)
+
 
 if __name__ == '__main__':
     main()
