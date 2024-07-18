@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap, getGamesNum, getWaffle
+import getHeatmap, getGamesNum, getWaffle, getPieceTakes
 
 random.seed(121415)
 
@@ -78,6 +78,29 @@ def show_big_number(start_elo, end_elo):
     game_num = getGamesNum.getGamesNum(start_elo, end_elo)
     st.metric("Number of games being analyzed", game_num)
 
+def show_piece_takes(start_elo, end_elo):
+    import plotly.graph_objects as go
+
+    st.subheader("How many takes does each piece has?")
+    st.write("insert description here.")
+
+    x = ['Pawn', 'Rook', 'Knight', 'Bishop', 'Queen', 'King']
+    y = getPieceTakes.getPieceTakesData(start_elo, end_elo)
+
+    y_text = [f'{val:,}' for val in y]
+
+    # Use textposition='auto' for direct text
+    fig = go.Figure(data=[go.Bar(
+                x=x, y=y,
+                text=y_text,
+                textposition='auto',
+                marker=dict(color='mediumvioletred')
+            )])
+
+    fig.update_layout(margin=dict(t=0, b=0))
+
+    st.plotly_chart(fig, theme="streamlit")
+
 def main():
     st.set_page_config(
         page_title="Chess Visualizations", 
@@ -106,8 +129,8 @@ def main():
 
     
     show_checkmate_heatmap(start_elo, end_elo)  
-    show_waffle(start_elo, end_elo)  
-
+    show_waffle(start_elo, end_elo)
+    show_piece_takes(start_elo, end_elo)
 
 if __name__ == '__main__':
     main()
