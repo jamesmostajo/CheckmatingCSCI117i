@@ -52,8 +52,14 @@ def show_checkmate_heatmap(start_elo, end_elo):
 def show_waffle(start_elo, end_elo):
     import plotly.graph_objects as go
 
-    gap = 0.25
+    st.subheader("How much checkmates does each piece have compared to others")
     data = getWaffle.getWaffleData(start_elo, end_elo)
+    if data == -1 :
+        st.write("There are no checkmates in this elo range")
+        return
+    else:
+        st.write("insert description here.")
+    gap = 0.25
     
     colors = ['#0015FF', '#FF00A1', '#90FE00', '#8400FF', '#00FFF7', '#FF7300']
     color_scale = [[i / (len(colors) - 1), color] for i, color in enumerate(colors)]
@@ -62,11 +68,12 @@ def show_waffle(start_elo, end_elo):
         z=data,
         colorscale=color_scale,
         showscale=False,
+        hoverinfo='none',
         xgap = gap, ygap = gap
     ))
 
     fig.update_layout(
-        height=1000,
+        height=1000, margin=dict(t=0, b=0),
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks=''),
         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, ticks='')
     )

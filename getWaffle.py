@@ -35,6 +35,9 @@ def getWaffleData(ratingFilter1, ratingFilter2):
             pieceCheckmateFrequency[piece] += 1
             total_checkmates += 1
         
+        if  total_checkmates == 0:
+            return -1
+            
         for piece in pieceCheckmateFrequency:
             pieceDistribution[pieceToIndex[piece]] = round(pieceCheckmateFrequency[piece]/total_checkmates * 10000)
         
