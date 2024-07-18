@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPie, getPieGameResults
+import getHeatmap, getGamesNum, getWaffle, getPieceTakes, getPie, getPieGameResults, getEloHistogram
 
 random.seed(121415)
 
@@ -164,6 +164,19 @@ def show_pie_result(start_elo, end_elo):
 
     st.plotly_chart(fig, theme="streamlit")
 
+def show_histogram():
+    import plotly.express as px
+    st.subheader("Number of Games played for each Game ELO")
+    data = getEloHistogram.getHistogramData()
+    fig = px.histogram(x=data['elo_ranges'], y=data['values'], nbins=len(data['elo_ranges']))
+    
+    fig.update_layout(
+        margin=dict(t=0, b=0),
+        xaxis_title='ELO Rating',
+        yaxis_title='Number of Games',
+    )
+    st.plotly_chart(fig, theme="streamlit")
+
 def main():
     st.set_page_config(
         page_title="Chess Visualizations", 
@@ -189,7 +202,7 @@ def main():
     with col2:
         show_big_number(start_elo, end_elo)
 
-    
+    show_histogram()
     show_checkmate_heatmap(start_elo, end_elo)  
     show_waffle(start_elo, end_elo)
     show_piece_takes(start_elo, end_elo)
